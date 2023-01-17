@@ -1,5 +1,5 @@
 db_name = 'course'
-user = 'vanusha'
+user = 'postgres'
 password = '25692569'
 host = 'localhost'
 CONSOLETEXT = "Результат ваших дейтсвий"

@@ -63,13 +63,54 @@ class CustomerForm:
                                                               background='#2998E9', width='25', height='3',
                                                               font="Sedan 12")
         self.active_elements['add_balance'] = create_button(font_color='#ffffff', text="Пополнить баланс",
-                                                            command=self.show_add_balance, position=[240, 525],
+                                                            command=self.show_add_balance, position=[240, 625],
                                                             background='#2998E9', width='25', height='3',
                                                             font="Sedan 12")
+        self.active_elements['delete_from_purchase'] = create_button(font_color='#ffffff', text="Удалить покупку",
+                                                                     command=self.show_delete_purchase,
+                                                                     position=[240, 225],
+                                                                     background='#2998E9', width='25', height='3',
+                                                                     font="Sedan 12")
         self.active_elements['kill_all'] = create_button(font_color='#ffffff', text="Выход",
                                                          command=self.kill_all, position=[1000, 700],
                                                          background='#2998E9', width='25', height='3',
                                                          font="Sedan 12")
+
+    def show_delete_purchase(self):
+        self.destroy_all()
+        self.create_console('Вы хотите удалить покупку')
+        self.active_elements['customer_name'] = create_label(font_color="#000000",
+                                                             text="Выберите покупателя", position=[self.x, 275],
+                                                             background="#b5effb",
+                                                             font="Sedan 14")
+        self.cursor.execute('SELECT id FROM "Customer"')
+        customers_id = self.cursor.fetchall()
+        self.active_elements['customer_info'] = create_button(font_color='#ffffff', text="Просмотреть",
+                                                              command=self.show_customer_info, position=[50, 325],
+                                                              background='#2998E9', width=12, height='3',
+                                                              font="Sedan 12")
+        self.active_elements['customer_combo'] = create_combo_box(width=12, font_color="#000000",
+                                                                  position=[self.x, 325], values=customers_id,
+                                                                  font="Sedan 14", default=0)
+        self.active_elements['go_back'] = create_button(font_color='#ffffff', text="Назад",
+                                                        command=self.return_to_main_screen,
+                                                        position=[1000, 700], background='#2998E9', width='25',
+                                                        height='3', font="Sedan 12")
+        self.active_elements['complete'] = create_button(font_color='#ffffff', text="Выполнить",
+                                                         command=self.user_delete_purchase, position=[325, 675],
+                                                         background='#2998E9', width=12, height='3',
+                                                         font="Sedan 12")
+
+    def user_delete_purchase(self):
+        customer = int(self.active_elements['customer_combo'].get())
+        self.cursor.execute('SELECT * FROM "Purchase" WHERE customer_id=%s AND complete=False', (customer,))
+        if self.cursor.fetchone():
+            self.cursor.execute('DELETE FROM "Purchase" WHERE customer_id=%s AND complete=False', (customer,))
+            self.return_to_main_screen()
+            self.create_console('Покупка у пользователя успешно удалена')
+        else:
+            self.return_to_main_screen()
+            self.create_console('У данного пользователя нет открытой покупки')
 
     def make_purchase(self):
         self.destroy_all()
@@ -152,6 +193,11 @@ class CustomerForm:
                                                                    position=[240, 725],
                                                                    background='#2998E9', width='25', height='3',
                                                                    font="Sedan 12")
+        self.active_elements['show_list_dish_types'] = create_button(font_color='#ffffff', text="Список типов блюд",
+                                                                     command=self.show_list_dish_types,
+                                                                     position=[240, 800],
+                                                                     background='#2998E9', width='25', height='3',
+                                                                     font="Sedan 12")
         self.active_elements['go_back'] = create_button(font_color='#ffffff', text="Назад",
                                                         command=self.return_to_main_screen,
                                                         position=[1000, 700], background='#2998E9', width='25',
@@ -170,6 +216,10 @@ class CustomerForm:
     def show_customer_info(self):
         self.cursor.execute('SELECT * FROM "Customer" LIMIT 10;')
         self.show_answer("Список покупателей\nname, id, surname, balance, date_born, sex, username\n")
+
+    def show_list_dish_types(self):
+        self.cursor.execute('SELECT * FROM "Dish_types" LIMIT 10;')
+        self.show_answer("Список типов блюд\nid, name, description\n")
 
     def show_list_shops(self):
         self.cursor.execute('SELECT * FROM "Restaurants" LIMIT 10;')
@@ -223,26 +273,27 @@ class CustomerForm:
         self.destroy_all()
         self.create_console('Переход на страницу добавления ингридиента')
         self.active_elements['ingridient_name'] = create_label(font_color="#000000",
-                                                               text="Название блюда", position=[self.x, 275],
+                                                               text="Название ингредиента", position=[self.x, 275],
                                                                background="#b5effb",
                                                                font="Sedan 14")
         self.active_elements['ingridient_name_entry'] = create_entry(width=25, font="Sedan 14",
                                                                      position=[self.x, 325], font_color="#000000")
         self.active_elements['ingridient_description'] = create_label(font_color="#000000",
-                                                                      text="Описание блюда", position=[self.x, 375],
+                                                                      text="Описание ингредиента",
+                                                                      position=[self.x, 375],
                                                                       background="#b5effb",
                                                                       font="Sedan 14")
         self.active_elements['ingridient_description_entry'] = create_entry(width=25, font="Sedan 14",
                                                                             position=[self.x, 425],
                                                                             font_color="#000000")
         self.active_elements['ingridient_cost'] = create_label(font_color="#000000",
-                                                               text="Цена блюда", position=[self.x, 475],
+                                                               text="Себестоимость ингредиента", position=[self.x, 475],
                                                                background="#b5effb",
                                                                font="Sedan 14")
         self.active_elements['ingridient_cost_entry'] = create_entry(width=25, font="Sedan 14",
                                                                      position=[self.x, 525], font_color="#000000")
         self.active_elements['complete'] = create_button(font_color='#ffffff', text="Выполнить",
-                                                         command=self.add_ingridient, position=[425, 625],
+                                                         command=self.add_ingridient, position=[self.x, 625],
                                                          background='#2998E9', width=12, height='3',
                                                          font="Sedan 12")
         self.active_elements['go_back'] = create_button(font_color='#ffffff', text="Назад",
@@ -258,8 +309,9 @@ class CustomerForm:
         except Exception:
             self.create_console('Что-то пошло не так')
         else:
-            self.cursor.execute('INSERT INTO "Ingridient" (name, description, cost) VALUES (%s, %s, CAST(%s AS MONEY))',
-                                (name, description, cost))
+            self.cursor.execute(
+                'INSERT INTO "Ingridient" (name, description, price) VALUES (%s, %s, CAST(%s AS MONEY))',
+                (name, description, cost))
             self.show_main_screen()
             self.create_console('Ингриент успешно добавлен')
 
@@ -304,7 +356,7 @@ class CustomerForm:
                                                           background="#b5effb",
                                                           font="Sedan 14")
         self.active_elements['dish_info'] = create_button(font_color='#ffffff', text="Просмотреть",
-                                                          command=self.show_list_dishes, position=[50, 725],
+                                                          command=self.show_list_dish_types, position=[50, 725],
                                                           background='#2998E9', width=12, height='3',
                                                           font="Sedan 12")
         self.active_elements['dish_combo'] = create_combo_box(width=12, font_color="#000000",
@@ -589,6 +641,7 @@ class CustomerForm:
         self.create_console('Возврат на основной экран')
         self.destroy_all()
         self.show_main_screen()
+        self.db.commit()
 
 
 if __name__ == '__main__':

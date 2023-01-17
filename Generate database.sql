@@ -28,8 +28,8 @@ CREATE TABLE "Dishes" (
 	"dish_type_id" integer NOT NULL,
 	"restaraun_id" bigint NOT NULL,
 	CONSTRAINT "Dishes_pk" PRIMARY KEY ("id"),
-    FOREIGN KEY ("dish_type_id") REFERENCES "Dish_types"("id"),
-    FOREIGN KEY ("restaraun_id") REFERENCES "Restaurants"("id")
+    FOREIGN KEY ("dish_type_id") REFERENCES "Dish_types"("id") ON DELETE CASCADE,
+    FOREIGN KEY ("restaraun_id") REFERENCES "Restaurants"("id") ON DELETE CASCADE
 );
 
 
@@ -54,7 +54,7 @@ CREATE TABLE "Purchase" (
 	"complete" bool NOT NULL,
 	"current_price" money DEFAULT 0,
 	CONSTRAINT "Purchase_pk" PRIMARY KEY ("id"),
-	FOREIGN KEY ("customer_id") REFERENCES "Customer"("id")
+	FOREIGN KEY ("customer_id") REFERENCES "Customer"("id") ON DELETE CASCADE
 );
 
 
@@ -63,8 +63,8 @@ CREATE TABLE "Menu2Ingridient" (
 	"ingridient_id" bigint NOT NULL,
 	"dish_id" bigint NOT NULL,
 	CONSTRAINT "Menu2Ingridient_pk" PRIMARY KEY ("id"),
-	FOREIGN KEY ("ingridient_id") REFERENCES "Ingridient"("id"),
-	FOREIGN KEY ("dish_id") REFERENCES "Dishes"("id")
+	FOREIGN KEY ("ingridient_id") REFERENCES "Ingridient"("id") ON DELETE CASCADE,
+	FOREIGN KEY ("dish_id") REFERENCES "Dishes"("id") ON DELETE CASCADE
 );
 
 
@@ -83,8 +83,8 @@ CREATE TABLE "Ingridient2Provider" (
 	"provider_id" bigint NOT NULL,
 	"time_to_deliver" DATE NOT NULL,
 	CONSTRAINT "Ingridient2Provider_pk" PRIMARY KEY ("id"),
-	FOREIGN KEY ("ingridient_id") REFERENCES "Ingridient"("id"),
-	FOREIGN KEY ("provider_id") REFERENCES "Providers"("id")
+	FOREIGN KEY ("ingridient_id") REFERENCES "Ingridient"("id") ON DELETE CASCADE,
+	FOREIGN KEY ("provider_id") REFERENCES "Providers"("id") ON DELETE CASCADE
 );
 
 
@@ -94,6 +94,6 @@ CREATE TABLE "Purchase2Dishes" (
 	"purchase_id" bigint NOT NULL,
 	"dishes_id" bigint NOT NULL,
 	CONSTRAINT "Purchase2Dishes_pk" PRIMARY KEY ("id"),
-	FOREIGN KEY ("purchase_id") REFERENCES "Purchase"("id"),
-	FOREIGN KEY ("dishes_id") REFERENCES "Dishes"("id")
+	FOREIGN KEY ("purchase_id") REFERENCES "Purchase"("id") ON DELETE CASCADE,
+	FOREIGN KEY ("dishes_id") REFERENCES "Dishes"("id") ON DELETE SET NULL
 );
